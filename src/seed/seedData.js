@@ -173,7 +173,6 @@ const seedDatabase = async () => {
     console.log('  Project Manager: pm@taskmanager.com    / Password@123');
     console.log('  Team Member 1:   alex@taskmanager.com  / Password@123');
     console.log('  Team Member 2:   priya@taskmanager.com / Password@123');
-    console.log('🔒 Project Explanation Password: Shiv@818780');
     console.log('===========================================\n');
 
     process.exit(0);

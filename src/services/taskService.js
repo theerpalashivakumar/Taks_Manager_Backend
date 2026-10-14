@@ -182,8 +182,13 @@ class TaskService {
       throw ApiError.notFound('Task not found');
     }
 
-    // Verify access to project
-    ProjectService.assertProjectAccess(task.project, user);
+    // Assigned team member always has read access to their own task
+    const isAssignee = task.assignedTo?._id?.toString() === user._id.toString();
+
+    // All others must be project members / PM / admin
+    if (!isAssignee) {
+      ProjectService.assertProjectAccess(task.project, user);
+    }
 
     const comments = await TaskComment.find({ task: taskId })
       .sort({ createdAt: 1 })
@@ -363,7 +368,11 @@ class TaskService {
       throw ApiError.notFound('Task not found');
     }
 
-    ProjectService.assertProjectAccess(task.project, user);
+    // Assignee can always read comments on their own task
+    const isAssignee = task.assignedTo?.toString() === user._id.toString();
+    if (!isAssignee) {
+      ProjectService.assertProjectAccess(task.project, user);
+    }
 
     return TaskComment.find({ task: taskId })
       .sort({ createdAt: 1 })

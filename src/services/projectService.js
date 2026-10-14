@@ -95,8 +95,12 @@ class ProjectService {
     } else if (user.role === ROLES.PROJECT_MANAGER) {
       filter.$or = [{ projectManager: user._id }, { members: user._id }];
     } else {
-      // Team Member sees only projects they belong to
-      filter.members = user._id;
+      // Team Member: see projects where they are a member OR have an assigned task
+      const assignedTaskProjects = await Task.find({ assignedTo: user._id }).distinct('project');
+      filter.$or = [
+        { members: user._id },
+        { _id: { $in: assignedTaskProjects } },
+      ];
     }
 
     // Status filter
@@ -152,8 +156,11 @@ class ProjectService {
       throw ApiError.notFound('Project not found');
     }
 
-    // Check authorization
-    this.assertProjectAccess(project, user);
+    // Team member with an assigned task in this project always has read access
+    const hasAssignedTask = await Task.exists({ project: projectId, assignedTo: user._id });
+    if (!hasAssignedTask) {
+      this.assertProjectAccess(project, user);
+    }
 
     // Compute live task count breakdown
     const [totalTasks, completedTasks, inProgressTasks, todoTasks, inReviewTasks] = await Promise.all([

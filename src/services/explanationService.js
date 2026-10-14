@@ -8,7 +8,10 @@ class ExplanationService {
    * Securely verifies view password and generates a signed viewing token
    */
   static verifyPassword(submittedPassword) {
-    const targetPassword = process.env.PROJECT_VIEW_PASSWORD || 'Shiv@818780';
+    const targetPassword = process.env.PROJECT_VIEW_PASSWORD;
+    if (!targetPassword) {
+      throw ApiError.internal('Server misconfiguration: PROJECT_VIEW_PASSWORD is not set.');
+    }
 
     if (!submittedPassword || submittedPassword !== targetPassword) {
       throw ApiError.unauthorized('Incorrect project access password. Access denied.');
@@ -61,7 +64,7 @@ class ExplanationService {
           'Independent Frontend and Backend repositories with dedicated READMEs, scripts, and .env.example files',
           'Strict server-enforced Role-Based Access Control (Admin, Project Manager, Team Member)',
           'Real database-backed statistics, pagination, search, and dynamic project completion calculations',
-          'Password-protected Architecture Docs ("Shiv@818780") restricted to authenticated users only',
+          'Password-protected Architecture Docs ("Personal_key") restricted to authenticated users only',
         ],
       },
       techStack: {
