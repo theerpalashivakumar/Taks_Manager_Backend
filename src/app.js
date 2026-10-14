@@ -9,6 +9,7 @@ const ApiResponse = require('./utils/apiResponse');
 const ApiError = require('./utils/apiError');
 
 const app = express();
+app.set("trust proxy", 1);
 
 // Security HTTP headers
 app.use(helmet());
