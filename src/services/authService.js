@@ -13,11 +13,17 @@ class AuthService {
       throw ApiError.conflict('An account with this email address already exists');
     }
 
+    // Role safety guard: Prevent admin privilege escalation during public registration in production
+    let assignedRole = role || ROLES.TEAM_MEMBER;
+    if (process.env.NODE_ENV === 'production' && assignedRole === ROLES.ADMIN) {
+      assignedRole = ROLES.TEAM_MEMBER;
+    }
+
     const user = await User.create({
       name: name.trim(),
       email: normalizedEmail,
       password,
-      role: role || ROLES.TEAM_MEMBER,
+      role: assignedRole,
     });
 
     const token = signToken({ id: user._id, role: user.role });

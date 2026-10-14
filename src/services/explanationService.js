@@ -1,7 +1,9 @@
 const jwt = require('jsonwebtoken');
 const ApiError = require('../utils/apiError');
 
-const EXPLANATION_SECRET = process.env.JWT_SECRET || 'project_explanation_secret_key_818780';
+const EXPLANATION_SECRET =
+  process.env.PROJECT_EXPLANATION_SECRET ||
+  (process.env.PROJECT_VIEW_PASSWORD ? `${process.env.PROJECT_VIEW_PASSWORD}_signing_salt` : 'project_explanation_secret_key_818780');
 
 class ExplanationService {
   /**
@@ -221,11 +223,11 @@ class ExplanationService {
         backend: 'Render / Railway / AWS ECS with environment variables configured',
         database: 'MongoDB Atlas with IP access lists and SSL/TLS encrypted connections',
       },
-      liveCredentials: {
-        adminDemo: { email: 'admin@taskmanager.com', password: 'Password@123', role: 'Admin' },
-        pmDemo: { email: 'pm@taskmanager.com', password: 'Password@123', role: 'Project Manager' },
-        memberDemo: { email: 'alex@taskmanager.com', password: 'Password@123', role: 'Team Member' },
-      },
+      demoAccounts: [
+        { email: 'admin@taskmanager.com', role: 'Admin', description: 'Full organizational authority' },
+        { email: 'pm@taskmanager.com', role: 'Project Manager', description: 'Project creation & task dispatching' },
+        { email: 'alex@taskmanager.com', role: 'Team Member', description: 'Assigned task execution' },
+      ],
     };
   }
 }

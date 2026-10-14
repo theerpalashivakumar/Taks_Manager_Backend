@@ -59,7 +59,7 @@ class TaskService {
 
     return Task.findById(task._id)
       .populate('assignedTo', 'name email role avatar')
-      .populate('project', 'name status deadline')
+      .populate('project', 'name status deadline projectManager')
       .populate('createdBy', 'name email');
   }
 
@@ -104,15 +104,24 @@ class TaskService {
     // Overdue filter
     if (isOverdue === 'true' || isOverdue === true) {
       filter.dueDate = { $lt: new Date() };
-      filter.status = { $ne: TASK_STATUSES.DONE };
+      if (filter.status) {
+        if (filter.status === TASK_STATUSES.DONE) {
+          filter.status = { $in: [] }; // Completed tasks cannot be overdue
+        }
+      } else {
+        filter.status = { $ne: TASK_STATUSES.DONE };
+      }
     }
 
     // Search query on title or description
     if (search.trim()) {
-      filter.$or = [
-        { title: { $regex: search.trim(), $options: 'i' } },
-        { description: { $regex: search.trim(), $options: 'i' } },
-      ];
+      filter.$and = filter.$and || [];
+      filter.$and.push({
+        $or: [
+          { title: { $regex: search.trim(), $options: 'i' } },
+          { description: { $regex: search.trim(), $options: 'i' } },
+        ],
+      });
     }
 
     // Role-based scoping: Team members see tasks from projects they belong to or are assigned to
@@ -153,7 +162,7 @@ class TaskService {
         .skip(skip)
         .limit(limitNum)
         .populate('assignedTo', 'name email role avatar')
-        .populate('project', 'name status deadline')
+        .populate('project', 'name status deadline projectManager')
         .populate('createdBy', 'name email'),
       Task.countDocuments(filter),
     ]);
@@ -295,7 +304,7 @@ class TaskService {
 
     return Task.findById(task._id)
       .populate('assignedTo', 'name email role avatar')
-      .populate('project', 'name status deadline');
+      .populate('project', 'name status deadline projectManager');
   }
 
   /**

@@ -1,5 +1,6 @@
 const Project = require('../models/Project');
 const Task = require('../models/Task');
+const TaskComment = require('../models/TaskComment');
 const User = require('../models/User');
 const ApiError = require('../utils/apiError');
 const { ROLES } = require('../constants/roles');
@@ -93,14 +94,20 @@ class ProjectService {
     if (user.role === ROLES.ADMIN) {
       // Admin has full visibility
     } else if (user.role === ROLES.PROJECT_MANAGER) {
-      filter.$or = [{ projectManager: user._id }, { members: user._id }];
+      filter.$and = filter.$and || [];
+      filter.$and.push({
+        $or: [{ projectManager: user._id }, { members: user._id }],
+      });
     } else {
       // Team Member: see projects where they are a member OR have an assigned task
       const assignedTaskProjects = await Task.find({ assignedTo: user._id }).distinct('project');
-      filter.$or = [
-        { members: user._id },
-        { _id: { $in: assignedTaskProjects } },
-      ];
+      filter.$and = filter.$and || [];
+      filter.$and.push({
+        $or: [
+          { members: user._id },
+          { _id: { $in: assignedTaskProjects } },
+        ],
+      });
     }
 
     // Status filter
@@ -317,6 +324,10 @@ class ProjectService {
 
     this.assertProjectManagementPermission(project, user);
 
+    const taskIds = await Task.find({ project: projectId }).distinct('_id');
+    if (taskIds.length > 0) {
+      await TaskComment.deleteMany({ task: { $in: taskIds } });
+    }
     await Task.deleteMany({ project: projectId });
     await Project.findByIdAndDelete(projectId);
 

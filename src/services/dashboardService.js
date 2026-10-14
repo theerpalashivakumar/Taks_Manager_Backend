@@ -18,7 +18,11 @@ class DashboardService {
       if (isPM) {
         projectScopeQuery.$or = [{ projectManager: user._id }, { members: user._id }];
       } else {
-        projectScopeQuery.members = user._id;
+        const assignedTaskProjects = await Task.find({ assignedTo: user._id }).distinct('project');
+        projectScopeQuery.$or = [
+          { members: user._id },
+          { _id: { $in: assignedTaskProjects } },
+        ];
       }
     }
 
