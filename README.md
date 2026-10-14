@@ -401,14 +401,5 @@ npm test
 
 ## 13. Git Repository Push Commands
 
-To publish this backend into its own independent GitHub repository:
 
-```bash
-cd Task_Manager_Backend
-git init
-git add .
-git commit -m "feat: complete production-ready project & team management backend"
-git branch -M main
-git remote add origin https://github.com/<your-username>/project-team-management-backend.git
-git push -u origin main
-```
+
