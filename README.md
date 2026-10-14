@@ -15,7 +15,7 @@ The backend server powers an enterprise Project & Team Management System. It enf
 - **Task Workflow & Collaboration**: Task priorities (`Low`, `Medium`, `High`, `Critical`), statuses (`To Do`, `In Progress`, `In Review`, `Done`), assignment, due date overdue detection, and threaded comments.
 - **Database-Driven Dashboard**: High-performance MongoDB aggregation pipelines providing real-time KPI metrics, tasks grouped by status, overdue counts, and user workload.
 - **Immutable Audit Logging**: Automatic tracking of project creations, status updates, team reassignments, task completions, and comments.
-- **Password-Protected Project Explanation**: Secure endpoint verifying the access key `Shiv@818780` with brute-force rate limiting and signed token issuance.
+- **Password-Protected Project Explanation**: Secure endpoint verifying the access key `Secrate Key` with brute-force rate limiting and signed token issuance.
 
 ---
 
