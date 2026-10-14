@@ -68,7 +68,35 @@
 //     }
 //     return app(req, res);
 // };
+const mongoose = require("mongoose");
+const app = require("../src/app");
+
+let cached = global._mongoose;
+if (!cached) cached = global._mongoose = { conn: null, promise: null };
+
+async function connectDB() {
+    if (cached.conn) return cached.conn;
+    if (!cached.promise) {
+        cached.promise = mongoose.connect(process.env.MONGODB_URI, {
+            serverSelectionTimeoutMS: 8000,
+            bufferCommands: false,
+        });
+    }
+    try {
+        cached.conn = await cached.promise;
+    } catch (err) {
+        cached.promise = null;
+        throw err;
+    }
+    return cached.conn;
+}
+
 module.exports = async (req, res) => {
+    // Let CORS preflight and the health check run without touching the database
+    if (req.method === "OPTIONS" || req.url.startsWith("/api/health") || req.url === "/") {
+        return app(req, res);
+    }
+
     try {
         await connectDB();
     } catch (err) {
@@ -78,8 +106,9 @@ module.exports = async (req, res) => {
         return res.status(500).json({
             success: false,
             message: "Database connection failed",
-            reason: err.message,
+            reason: err.message, // temporary: remove once everything works
         });
     }
+
     return app(req, res);
 };
