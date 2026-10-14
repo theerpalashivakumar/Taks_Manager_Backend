@@ -142,7 +142,7 @@ CLIENT_URL=http://localhost:5173
 NODE_ENV=development
 
 # Password-Protected Project Explanation Feature
-PROJECT_VIEW_PASSWORD=Shiv@818780
+PROJECT_VIEW_PASSWORD=Personal_key
 ```
 
 > **Security Note:** Never commit your `.env` file to version control. It is already added to `.gitignore`.
@@ -207,7 +207,7 @@ PROJECT_VIEW_PASSWORD=Shiv@818780
 | Operation | Admin | Project Manager | Team Member | Public |
 | :--- | :---: | :---: | :---: | :---: |
 | Register / Login / View Me | Yes | Yes | Yes | Yes |
-| Password-Protected Explanation (`Shiv@818780`) | Yes | Yes | Yes | Yes (with pass) |
+| Password-Protected Explanation (`Personal_key`) | Yes | Yes | Yes | Yes (with pass) |
 | Manage Users (Roles & Activation) | Yes | No | No | No |
 | View Organization Directory | Yes | Yes | Yes | No |
 | Create Project | Yes | Yes | No | No |
@@ -337,7 +337,7 @@ Standard Response Format:
 ### 9.5 Password-Protected Project Explanation (`/api/project-explanation`)
 
 - `POST /api/project-explanation/verify`
-  - **Body:** `{ "password": "Shiv@818780" }`
+  - **Body:** `{ "password": "Personal_key" }`
   - **Response:** Returns a signed short-lived verification token.
   - Protected with strict rate limiting against brute-force attacks.
 - `GET /api/project-explanation/content`
@@ -359,7 +359,7 @@ This populates realistic demo accounts and projects:
 - **Project Manager**: `pm@taskmanager.com` / `Password@123`
 - **Team Member 1**: `alex@taskmanager.com` / `Password@123`
 - **Team Member 2**: `priya@taskmanager.com` / `Password@123`
-- **View Project Password**: `Shiv@818780`
+- **View Project Password**: `Personal_key`
 
 ---
 
@@ -373,7 +373,7 @@ npm test
 
 ### Tested Workflows:
 1. Token generation, claims encoding, and invalid signature rejection.
-2. Project explanation password verification with `Shiv@818780` and rejection of incorrect passwords.
+2. Project explanation password verification with `Personal_key` and rejection of incorrect passwords.
 3. Access token requirement for viewing explanation architecture payload.
 4. Domain enums validation (roles, project statuses, task priorities, task statuses).
 5. Role-Based Access Control (Admin global access, Project Manager scoped access, Team Member restrictions, outsider rejection).
@@ -394,7 +394,7 @@ npm test
    - `JWT_EXPIRES_IN=1d`
    - `PORT=5000`
    - `CLIENT_URL=https://your-frontend-app.vercel.app`
-   - `PROJECT_VIEW_PASSWORD=Shiv@818780`
+   - `PROJECT_VIEW_PASSWORD=Personal_key`
    - `NODE_ENV=production`
 
 ---
