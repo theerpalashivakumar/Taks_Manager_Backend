@@ -1,3 +1,4 @@
+require('dotenv').config();
 const test = require('node:test');
 const assert = require('node:assert');
 const { signToken, verifyToken } = require('../src/utils/tokenUtils');
